@@ -25,6 +25,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "edge_se3_calib.h"
+#include "g2o/types/sba/types_six_dof_expmap.h"
 
 namespace g2o {
 
@@ -36,10 +37,10 @@ namespace g2o {
 
   void EdgeSE3Calib::computeError()
   {
-    const VertexSE3* v1 = static_cast<const VertexSE3*>(_vertices[0]);
-    const VertexSE3* v2 = static_cast<const VertexSE3*>(_vertices[1]);
+    const VertexSE3Expmap* v1 = static_cast<const VertexSE3Expmap*>(_vertices[0]);
+    const VertexSE3Expmap* v2 = static_cast<const VertexSE3Expmap*>(_vertices[1]);
     const VertexSE3* calib  = static_cast<const VertexSE3*>(_vertices[2]);
-    _error = g2o::internal::toVectorMQT(_measurement.inverse()*calib->estimate().inverse() * v1->estimate().inverse() * v2->estimate()*calib->estimate());
+    _error = g2o::internal::toVectorMQT(_measurement.inverse()*calib->estimate() * v1->estimate() * v2->estimate().inverse()*calib->estimate().inverse());
   }
 
   bool EdgeSE3Calib::write(std::ostream& os) const {
